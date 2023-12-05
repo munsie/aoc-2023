@@ -3,7 +3,7 @@
 import sys
 sys.path.append('../common')
 
-import common
+import util
 
 def read_range_map(f):
     # read the header line
@@ -11,10 +11,10 @@ def read_range_map(f):
 
     m = []
     while True:
-        s = common.trim(f.readline())
+        s = util.trim(f.readline())
         if not s:
             break
-        m.append(common.int_list_from_string(s))
+        m.append(util.int_list_from_string(s))
 
     return m
 
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     # load all of our input data
     with open('input.txt') as f:
         # read the list of seeds first
-        seeds = common.int_list_from_string(common.trim(f.readline().split(':')[1]))
+        seeds = util.int_list_from_string(util.trim(f.readline().split(':')[1]))
         f.readline()
 
         # load in the range maps
