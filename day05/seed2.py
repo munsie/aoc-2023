@@ -3,6 +3,7 @@
 import sys
 sys.path.append('../common')
 
+import ansi
 import common
 
 def read_range_map(f):
@@ -12,7 +13,7 @@ def read_range_map(f):
     m = []
     while True:
         s = common.trim(f.readline())
-        if not s:
+        if s == '':
             break
         m.append(common.int_list_from_string(s))
 
@@ -37,7 +38,9 @@ if __name__ == '__main__':
     # load all of our input data
     with open('input.txt') as f:
         # read the list of seeds first
-        seeds = common.int_list_from_string(common.trim(f.readline().split(':')[1]))
+        it = iter(common.int_list_from_string(common.trim(f.readline().split(':')[1])))
+        seeds = list(zip(it, it))
+        
         f.readline()
 
         # load in the range maps
@@ -53,19 +56,20 @@ if __name__ == '__main__':
     lowest_seed = 0
     lowest_location = 99999999999999999999
 
-    for seed in seeds:
-        soil = find_in_range_map(seed_to_soil_map, seed)
-        fertilizer = find_in_range_map(soil_to_fertilizer_map, soil)
-        water = find_in_range_map(fertilizer_to_water_map, fertilizer)
-        light = find_in_range_map(water_to_light_map, water)
-        temperature = find_in_range_map(light_to_temperature_map, light)
-        humidity = find_in_range_map(temperature_to_humidity_map, temperature)
-        location = find_in_range_map(humidity_to_location_map, humidity)
+    for seed_range in seeds:
+        for seed in range(seed_range[0], seed_range[0] + seed_range[1]):
+            soil = find_in_range_map(seed_to_soil_map, seed)
+            fertilizer = find_in_range_map(soil_to_fertilizer_map, soil)
+            water = find_in_range_map(fertilizer_to_water_map, fertilizer)
+            light = find_in_range_map(water_to_light_map, water)
+            temperature = find_in_range_map(light_to_temperature_map, light)
+            humidity = find_in_range_map(temperature_to_humidity_map, temperature)
+            location = find_in_range_map(humidity_to_location_map, humidity)
 
-        print(f'Seed {seed}, soil {soil}, fertilizer {fertilizer}, water {water}, light {light}, temperature {temperature}, humidity {humidity}, location {location}')
-        
-        if location < lowest_location:
-            lowest_location = location
-            lowest_seed = seed
+            #print(f'Seed {seed}, soil {soil}, fertilizer {fertilizer}, water {water}, light {light}, temperature {temperature}, humidity {humidity}, location {location}')
+            
+            if location < lowest_location:
+                lowest_location = location
+                lowest_seed = seed
 
     print(f'lowest_location = {lowest_location}, seed = {lowest_seed}')
