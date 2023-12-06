@@ -1,3 +1,6 @@
+import ansi
+import sys
+
 def trim(s: str):
     '''
     Removes all extra whitespace, along with leading and trailing whitespace from the string.
@@ -22,3 +25,17 @@ def int_list_from_string(s: str, delimiter=' '):
         int_list_from_string: list of integer values
     '''
     return [int(i) for i in s.split(delimiter)]
+
+def clamp(n, min = 0.0, max = 1.0):
+    '''
+    Returns the value clamped to the min/max range specified.
+
+    Args:
+        n: number to clamp
+        min: minimmum value
+        max: maximum value 
+
+    Returns:
+        clamp: number clamped to the min/max range
+    '''
+    return (min if n < min else (max if n > max else n))

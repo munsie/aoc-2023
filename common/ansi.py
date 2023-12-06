@@ -1,3 +1,5 @@
+import util
+
 RESET              = "\033[0m"
 BOLD_ON            = "\033[1m"
 ITALICS_ON         = "\033[3m"
@@ -31,3 +33,9 @@ CURSOR_ON          = "\033[?25h"
 CURSOR_OFF         = "\033[?25l"
 CLEAR_LINE         = "\033[2K"
 CLEAR_SCREEN       = "\033[2J"
+
+def fg_color(r: float, g: float, b: float):
+    return f'\033[38;2;{int(util.clamp(r) * 255.0)};{int(util.clamp(g) * 255.0)};{int(util.clamp(b) * 255.0)}m'
+
+def bg_color(r: float, g: float, b: float):
+    return f'\033[48;2;{int(util.clamp(r) * 255.0)};{int(util.clamp(g) * 255.0)};{int(util.clamp(b) * 255.0)}m'

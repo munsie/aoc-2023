@@ -3,7 +3,7 @@
 import sys
 sys.path.append('../common')
 
-import ansi
+import progress
 import util
 
 def read_range_map(f):
@@ -56,8 +56,19 @@ if __name__ == '__main__':
     lowest_seed = 0
     lowest_location = 99999999999999999999
 
+    # calculate how many seeds we're going to lookup
+    num_items = 0
+    for seed_range in seeds:
+        num_items += seed_range[1]
+
+    cur_item = 1
     for seed_range in seeds:
         for seed in range(seed_range[0], seed_range[0] + seed_range[1]):
+            if not (cur_item % 1000):
+                progress.update_items(cur_item, num_items, bar_width = 80, bar_type = progress.ANIMATED_RAINBOW)
+            
+            cur_item += 1
+
             soil = find_in_range_map(seed_to_soil_map, seed)
             fertilizer = find_in_range_map(soil_to_fertilizer_map, soil)
             water = find_in_range_map(fertilizer_to_water_map, fertilizer)
@@ -72,4 +83,5 @@ if __name__ == '__main__':
                 lowest_location = location
                 lowest_seed = seed
 
-    print(f'lowest_location = {lowest_location}, seed = {lowest_seed}')
+    progress.update_items(cur_item, num_items, bar_width = 80, suffix = ' Done!')
+    print(f'\n\nlowest_location = {lowest_location}, seed = {lowest_seed}')
