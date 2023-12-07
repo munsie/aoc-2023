@@ -55,18 +55,16 @@ def compare_hand(h1, h2):
 
 if __name__ == '__main__':
     with open('input.txt') as f:
-        hands = [l.split() for l in f]
-
-    # calculate all of the hand types
-    for hand in hands:
-        hand.append(hand_type(hand[0]))
+        hands = []
+        for l in f:
+            hand = l.split()
+            hand[1] = int(hand[1])
+            hand.append(hand_type(hand[0]))
+            hands.append(hand)
 
     # sort them in order from worst to best hand
     hands.sort(key=functools.cmp_to_key(compare_hand))
 
     # calculate our winnings
-    winnings = 0
-    for h in range(len(hands)):
-        winnings += int(hands[h][1]) * (h + 1)
-        
+    winnings = sum([hand[1] * (hands.index(hand) + 1) for hand in hands])
     print(winnings)
