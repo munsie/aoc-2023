@@ -68,9 +68,9 @@ def compare_hand(h1, h2):
         return 1
     else:
         # we have a tie -- we have to look at the individual cards to see which one is higher for each position
-        for i in range(len(h1[0])):
-            r1 = RANKS.index(h1[0][i])
-            r2 = RANKS.index(h2[0][i])
+        for c1, c2 in zip(h1[0], h2[0]):
+            r1 = RANKS.index(c1)
+            r2 = RANKS.index(c2)
             if r1 < r2:
                 return 1
             elif r1 > r2:
