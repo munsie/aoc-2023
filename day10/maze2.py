@@ -36,6 +36,9 @@ def translate_pos(x: ( int, int ), y: ( int, int )) -> (int, int):
 def get_pipe_type(maze: [ [ str ] ], pos: (int, int)) -> str:
     return maze[pos[1]][pos[0]]
 
+def set_pipe_type(maze: [ [ str ] ], pos: (int, int), t: str) -> None:
+    maze[pos[1]][pos[0]] = t
+
 def get_neighbor_positions(maze: [ [ str ] ], pos: (int, int)) -> [ (int, int) ]:
     '''
     Returns the two connected neighbors for the specified position.
@@ -69,6 +72,37 @@ def find_connected_neighbors(maze: [ [ str ] ], pos: (int, int)) -> [ (int, int)
 
     return neighbors
 
+def wrap_pos(pos: (int, int), bounds: (int, int)) -> (int, int):
+    x = pos[0]
+    while x < 0:
+        x += bounds[0]
+    while x >= bounds[0]:
+        x -= bounds[0]
+    y = pos[1]
+    while y < 0:
+        y += bounds[1]
+    while y >= bounds[1]:
+        y -= bounds[1]
+    return (x, y)
+
+def print_maze(maze: [ [ str ] ]) -> None:
+    for m in maze:
+        print(''.join(m))
+
+def flood_fill(maze: [ [ str ] ], pos: (int, int), fill: str):
+    bounds = (len(maze[0]), len(maze))
+    q = [ pos ]
+    while len(q) > 0:
+        pos = q.pop()
+        t = get_pipe_type(maze, pos)
+        if t == 'X' or t == fill:
+            continue
+        set_pipe_type(maze, pos, fill)
+        q.append(wrap_pos(translate_pos(pos, LEFT), bounds))
+        q.append(wrap_pos(translate_pos(pos, RIGHT), bounds))
+        q.append(wrap_pos(translate_pos(pos, TOP), bounds))
+        q.append(wrap_pos(translate_pos(pos, BOTTOM), bounds))
+
 if __name__ == '__main__':
     # read in maze
     maze = read_maze('input.txt')
@@ -87,5 +121,18 @@ if __name__ == '__main__':
     # remove the extra start position
     path.pop()
 
-    # furthest point is half the length of the path
-    print(int(len(path) / 2))
+    # convert path back to bitmap
+    for pos in path:
+        maze[pos[1]][pos[0]] = 'X'
+
+    # flood fill the outside by starting at the upper left and filling in anything that
+    # is not 'X'
+    flood_fill(maze, (0, 0), ' ')
+
+    print_maze(maze)
+    
+    # count up all of the points inside the path
+    count = 0
+    for m in maze:
+        count += sum(1 for p in m if (p != 'X' and p != ' '))
+    print(count)
