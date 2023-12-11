@@ -83,5 +83,8 @@ if __name__ == '__main__':
         # get the other end of the pipe
         path.append(get_opposite_end(maze, path[-1], path[-2]))
 
+    # remove the extra start position
+    path.pop()
+
     # furthest point is half the length of the path
     print(int(len(path) / 2))
