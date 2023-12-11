@@ -39,12 +39,15 @@ def get_neighbor_positions(maze: [ [ str ] ], pos: (int, int)) -> [ (int, int) ]
     '''
     Returns the two connected neighbors for the specified position.
     '''
-    p = get_pipe_type(maze, pos)    
+    p = get_pipe_type(maze, pos)
     return [ translate_pos(pos, n) for n in PIPE_NEIGHBORS[p] ]
 
 def get_opposite_end(maze: [ [ str ] ], pos: (int, int), enter: (int, int)) -> (int, int):
+    # get the two neighbor positions
     neighbors = get_neighbor_positions(maze, pos)
+    # remove the one we entered from
     neighbors.remove(enter)
+    # and the one remaining is the opposite end
     return neighbors[0]
 
 def find_connected_neighbors(maze: [ [ str ] ], pos: (int, int)) -> [ (int, int) ]:
@@ -70,22 +73,15 @@ if __name__ == '__main__':
     maze = read_maze('input.txt')
     
     # find starting point
-    start = find_start(maze)
-
+    path = [ find_start(maze) ]
+    
     # find the connected neighbors and use the first one as our next pos
-    connected_neighbors = find_connected_neighbors(maze, start)
-    pos = connected_neighbors[0]
+    path.append(find_connected_neighbors(maze, path[-1])[0])
 
-    # calculate length of loop
-    length = 1
-    prev_pos = start
-    while pos != start:
-        length += 1
-
+    # generate the loop
+    while path[-1] != path[0]:
         # get the other end of the pipe
-        next_pos = get_opposite_end(maze, pos, prev_pos)
-        prev_pos = pos
-        pos = next_pos
+        path.append(get_opposite_end(maze, path[-1], path[-2]))
 
-    # furthest point is length / 2
-    print(int(length / 2))
+    # furthest point is half the length of the path
+    print(int(len(path) / 2))
